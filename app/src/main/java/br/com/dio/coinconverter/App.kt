@@ -1,4 +1,4 @@
-package com.rodrigo.coinconverter
+package br.com.dio.coinconverter
 
 import android.app.Application
 

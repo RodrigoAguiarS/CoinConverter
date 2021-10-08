@@ -1,6 +1,8 @@
-package br.com.dio.coinconverter.data.di
+package br.com.dio.coinconverter.domain.di
 
 import android.util.Log
+import br.com.dio.coinconverter.data.repository.CoinRepository
+import br.com.dio.coinconverter.data.repository.CoinRepositoryImpl
 import br.com.dio.coinconverter.data.services.AwesomeService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -19,10 +21,8 @@ object DataModules {
     private const val HTTP_TAG = "OhHttp"
 
     fun load(){
-        loadKoinModules(networkModule())
-
+        loadKoinModules(networkModule() + repositoryModules())
     }
-
     private fun networkModule(): Module {
         return module {
             single {
@@ -40,6 +40,11 @@ object DataModules {
                 createService<AwesomeService>(get(), get())
 
             }
+        }
+    }
+    private fun repositoryModules(): Module {
+        return module {
+            single<CoinRepository> { CoinRepositoryImpl(get()) }
         }
     }
     private inline fun <reified T> createService(client: OkHttpClient, factory: GsonConverterFactory): T{

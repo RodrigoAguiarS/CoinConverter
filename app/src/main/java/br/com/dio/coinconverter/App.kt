@@ -1,8 +1,10 @@
 package br.com.dio.coinconverter
 
 import android.app.Application
+import android.app.Presentation
 import br.com.dio.coinconverter.domain.di.DataModules
 import br.com.dio.coinconverter.domain.di.DomainModule
+import br.com.dio.coinconverter.presentation.di.PresentationModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -14,5 +16,6 @@ class App : Application(){
         }
         DataModules.load()
         DomainModule.load()
+        PresentationModule.load()
     }
 }

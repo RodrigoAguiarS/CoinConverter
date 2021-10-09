@@ -1,14 +1,10 @@
 package br.com.dio.coinconverter.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
-import br.com.dio.coinconverter.App
-import br.com.dio.coinconverter.core.extensions.createDialog
-import br.com.dio.coinconverter.core.extensions.createProgressDialog
-import br.com.dio.coinconverter.core.extensions.text
+import br.com.dio.coinconverter.core.extensions.*
 import br.com.dio.coinconverter.data.model.Coin
 import br.com.dio.coinconverter.databinding.ActivityMainBinding
 import br.com.dio.coinconverter.presentation.MainViewModel
@@ -27,22 +23,10 @@ class MainActivity : AppCompatActivity() {
 
         bindAdapters()
         bindListeners()
-        viewModel.getExchangeValue("USD-BRL")
-        viewModel.state.observe(this){
-            when (it){
-                is MainViewModel.State.Error -> {
-                    dialog.dismiss()
-                    createDialog {
-                        setMessage(it.throwable.message)
-                    }.show()
-                }
-                MainViewModel.State.Loading -> dialog.show()
-                is MainViewModel.State.Success -> {
-                    dialog.dismiss()
-                    Log.e("TAG", "onCreate: ${it.value}")
-                }
-            }
-        }
+        bindObserve()
+
+
+
     }
 
     private fun bindListeners() {
@@ -50,7 +34,10 @@ class MainActivity : AppCompatActivity() {
             binding.btnConverter.isEnabled = it != null && it.toString().isNotEmpty()
         }
         binding.btnConverter.setOnClickListener {
-            Log.e("TAG", "bindingListeners" + binding.txtValue.text)
+            it.hideSoftKeyboard()
+
+            val search = "${binding.txtFrom.text}-${binding.txtTo.text}"
+            viewModel.getExchangeValue(search)
 
         }
     }
@@ -65,5 +52,28 @@ class MainActivity : AppCompatActivity() {
         binding.txtAtCompleteFrom.setText(Coin.BRL.name, false)
         binding.txtAtCompleteTo.setText(Coin.USD.name, false)
     }
+    private fun bindObserve(){
+        viewModel.state.observe(this){
+            when (it){
+                MainViewModel.State.Loading -> dialog.show()
+                is MainViewModel.State.Error -> {
+                    dialog.dismiss()
+                    createDialog {
+                        setMessage(it.throwable.message)
+                    }.show()
+                }
+                is MainViewModel.State.Success -> success(it)
+            }
+        }
+    }
+    private fun success(it: MainViewModel.State.Success){
+        dialog.dismiss()
 
+        val selectedCoin = binding.txtTo.text
+        val coin = Coin.values().find { it.name == selectedCoin } ?: Coin.BRL
+
+        val result = it.exchange.bid * binding.txtValue.text.toDouble()
+
+        binding.txtResult.text = result.formatCurrency(coin.locale)
+    }
 }

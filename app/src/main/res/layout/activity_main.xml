@@ -88,4 +88,16 @@
         android:layout_marginTop="@dimen/layout_half_padding"
         android:layout_height="wrap_content"/>
 
+    <TextView
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline3"
+        android:id="@+id/txtResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="5.27"
+        app:layout_constraintStart_toStartOf="@id/guide_start"
+        app:layout_constraintEnd_toEndOf="@id/guide_end"
+        app:layout_constraintTop_toBottomOf="@id/btnConverter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

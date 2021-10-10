@@ -1,13 +1,18 @@
 package br.com.dio.coinconverter.ui
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
+import br.com.dio.coinconverter.R
 import br.com.dio.coinconverter.core.extensions.*
 import br.com.dio.coinconverter.data.model.Coin
 import br.com.dio.coinconverter.databinding.ActivityMainBinding
 import br.com.dio.coinconverter.presentation.MainViewModel
+import br.com.dio.coinconverter.ui.history.HistoryActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
@@ -25,10 +30,23 @@ class MainActivity : AppCompatActivity() {
         bindListeners()
         bindObserve()
     }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_history) {
+            startActivity(Intent(this, HistoryActivity::class.java))
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
     private fun bindListeners() {
         binding.txtValue.editText?.doAfterTextChanged {
             binding.btnConverter.isEnabled = it != null && it.toString().isNotEmpty()
+            binding.btnSave.isEnabled = false
+
         }
         binding.btnConverter.setOnClickListener {
             it.hideSoftKeyboard()
@@ -36,6 +54,13 @@ class MainActivity : AppCompatActivity() {
             val search = "${binding.txtFrom.text}-${binding.txtTo.text}"
             viewModel.getExchangeValue(search)
 
+        }
+        binding.btnSave.setOnClickListener {
+            val value = viewModel.state.value
+            (value as? MainViewModel.State.Success)?.let {
+                val exchange = it.exchange.copy(bid = it.exchange.bid * binding.txtValue.text.toDouble())
+                viewModel.saveExchange(exchange)
+            }
         }
     }
 
@@ -60,11 +85,19 @@ class MainActivity : AppCompatActivity() {
                     }.show()
                 }
                 is MainViewModel.State.Success -> success(it)
+                MainViewModel.State.Saved -> {
+                    dialog.dismiss()
+                    createDialog {
+                        setMessage("Item salvo com sucesso")
+
+                    }.show()
+                }
             }
         }
     }
     private fun success(it: MainViewModel.State.Success){
         dialog.dismiss()
+        binding.btnSave.isEnabled = true
 
         val selectedCoin = binding.txtTo.text
         val coin = Coin.values().find { it.name == selectedCoin } ?: Coin.BRL

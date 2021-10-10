@@ -88,6 +88,16 @@
         android:layout_marginTop="@dimen/layout_half_padding"
         android:layout_height="wrap_content"/>
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSave"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:text="@string/salvar"
+        app:layout_constraintEnd_toEndOf="@id/guide_end"
+        app:layout_constraintStart_toStartOf="@id/guide_start"
+        app:layout_constraintTop_toBottomOf="@id/btnConverter" />
+
     <TextView
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline3"
         android:id="@+id/txtResult"
@@ -96,7 +106,7 @@
         tools:text="5.27"
         app:layout_constraintStart_toStartOf="@id/guide_start"
         app:layout_constraintEnd_toEndOf="@id/guide_end"
-        app:layout_constraintTop_toBottomOf="@id/btnConverter"
+        app:layout_constraintTop_toBottomOf="@id/btnSave"
         app:layout_constraintBottom_toBottomOf="parent"
         />
 

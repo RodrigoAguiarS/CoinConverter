@@ -1,6 +1,7 @@
 package br.com.dio.coinconverter.domain.di
 
 import android.util.Log
+import br.com.dio.coinconverter.data.database.AppDatabase
 import br.com.dio.coinconverter.data.repository.CoinRepository
 import br.com.dio.coinconverter.data.repository.CoinRepositoryImpl
 import br.com.dio.coinconverter.data.services.AwesomeService
@@ -10,6 +11,7 @@ import okhttp3.OkHttpClient
 import okhttp3.internal.platform.android.BouncyCastleSocketAdapter.Companion.factory
 import okhttp3.internal.threadFactory
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.android.ext.koin.androidApplication
 import org.koin.core.context.loadKoinModules
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -21,7 +23,7 @@ object DataModules {
     private const val HTTP_TAG = "OhHttp"
 
     fun load(){
-        loadKoinModules(networkModule() + repositoryModules())
+        loadKoinModules(networkModule() + repositoryModules() + databaseModule())
     }
     private fun networkModule(): Module {
         return module {
@@ -44,7 +46,13 @@ object DataModules {
     }
     private fun repositoryModules(): Module {
         return module {
-            single<CoinRepository> { CoinRepositoryImpl(get()) }
+            single<CoinRepository> { CoinRepositoryImpl(get(), get()) }
+        }
+    }
+    private fun databaseModule(): Module{
+        return module {
+            single {
+                AppDatabase.getInstance(androidApplication())}
         }
     }
     private inline fun <reified T> createService(client: OkHttpClient, factory: GsonConverterFactory): T{

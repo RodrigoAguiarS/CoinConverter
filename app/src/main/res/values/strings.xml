@@ -4,4 +4,7 @@
     <string name="converter_de">Converter de:</string>
     <string name="para">Para:</string>
     <string name="converter">Converter</string>
+    <string name="r_25_90">R$ 25.90</string>
+    <string name="historico">Historico</string>
+    <string name="salvar">Salvar</string>
 </resources>

@@ -29,6 +29,8 @@ class MainActivity : AppCompatActivity() {
         bindAdapters()
         bindListeners()
         bindObserve()
+
+        setSupportActionBar(binding.toolbar)
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
@@ -95,12 +97,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    private fun success(it: MainViewModel.State.Success){
+    private fun success(it: MainViewModel.State.Success) {
         dialog.dismiss()
         binding.btnSave.isEnabled = true
 
         val selectedCoin = binding.txtTo.text
-        val coin = Coin.values().find { it.name == selectedCoin } ?: Coin.BRL
+        val coin = Coin.getByName(selectedCoin)
 
         val result = it.exchange.bid * binding.txtValue.text.toDouble()
 

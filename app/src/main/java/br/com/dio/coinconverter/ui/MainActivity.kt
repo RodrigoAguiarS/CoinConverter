@@ -24,9 +24,6 @@ class MainActivity : AppCompatActivity() {
         bindAdapters()
         bindListeners()
         bindObserve()
-
-
-
     }
 
     private fun bindListeners() {
